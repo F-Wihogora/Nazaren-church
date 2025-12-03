@@ -106,9 +106,18 @@ export default function ContactPage() {
               <CardTitle>Map</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
-                <p className="text-muted-foreground">Map embed would go here</p>
-              </div>
+            
+                  <div className="w-full h-64 rounded-lg overflow-hidden">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.753991235677!2d30.11305807484965!3d-1.9579111980258572!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca7a82ee3bafd%3A0x8f47779fba399a27!2sRemera%20Church%20of%20the%20Nazarene!5e0!3m2!1sen!2srw!4v1701459680000!5m2!1sen!2srw"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  </div>
             </CardContent>
           </Card>
         </div>

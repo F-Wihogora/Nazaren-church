@@ -60,6 +60,7 @@ export default function HomePage() {
   const [bgIndex, setBgIndex] = useState(0);
 
   useEffect(() => {
+
     const interval = setInterval(() => {
       setBgIndex((prev) => (prev + 1) % bgImages.length);
     }, 5000);

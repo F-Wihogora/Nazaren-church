@@ -112,8 +112,7 @@ const Footer = () => {
         {/* BOTTOM */}
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
           <p>
-            &copy; {new Date().getFullYear()} REMERA CHURCH OF THE NAZARENE. All
-            rights reserved.
+            &copy; {new Date().getFullYear()} REMERA CHURCH OF THE NAZARENE. All rights reserved.
           </p>
         </div>
       </div>

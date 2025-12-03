@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Nazarene Church - Welcome Home",
+  title: "REMERA CHURCH OF THE NAZARENE - Welcome Home",
   description: "A place of worship, fellowship, and spiritual growth",
 };
 
