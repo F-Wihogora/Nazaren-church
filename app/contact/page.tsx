@@ -67,9 +67,16 @@ export default function ContactPage() {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-muted-foreground">
-                    123 Church Street
-                    <br />
-                    City, State 12345
+                  Remera Church of the Nazarene<br>
+                  Boulevard de l'Aeroport Road<br>
+                  Amahoro Village, Rukiri II Cell - Remera Sector<br>
+                  KN5 Rd, KG109 St. Kigali, Rwanda
+                  </br>
+                  </br>
+                  </br>
+
+
+
                   </p>
                 </div>
               </div>
