@@ -78,7 +78,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           } lg:translate-x-0 fixed lg:sticky top-0 left-0 h-screen w-64 bg-card border-r z-40 transition-transform duration-300`}
         >
           <div className="p-6 border-b">
-            <h2 className="text-xl font-bold">Nazarene Church</h2>
+            <h2 className="text-xl font-bold">REMERA CHURCH OF THE NAZARENE</h2>
             <p className="text-sm text-muted-foreground">Admin Panel</p>
           </div>
           <nav className="p-4 space-y-2">
