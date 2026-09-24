@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navbar />
           <main className="min-h-screen">{children}</main>
           <Footer />
@@ -29,4 +29,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -16,56 +16,30 @@ interface PrayerRequest {
 }
 
 export default function AdminPrayerRequestsPage() {
-  const [prayerRequests, setPrayerRequests] = useState<PrayerRequest[]>([]);
+  const [items, setItems] = useState<PrayerRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
 
-  useEffect(() => {
-    fetchPrayerRequests();
-  }, [statusFilter]);
+  useEffect(() => { fetchItems(); }, [statusFilter]);
 
-  const fetchPrayerRequests = async () => {
+  const fetchItems = async () => {
     try {
-      const url = statusFilter
-        ? `/api/prayer-requests?status=${statusFilter}`
-        : "/api/prayer-requests";
+      const url = statusFilter ? `/api/prayer-requests?status=${statusFilter}` : "/api/prayer-requests";
       const res = await fetch(url);
-      const data = await res.json();
-      setPrayerRequests(data.prayerRequests || []);
-    } catch (error) {
-      console.error("Error fetching prayer requests:", error);
-    } finally {
-      setLoading(false);
-    }
+      const d = await res.json();
+      setItems(d.prayerRequests || []);
+    } catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
   const handleStatusUpdate = async (id: string, status: string) => {
-    try {
-      const res = await fetch(`/api/prayer-requests/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-
-      if (res.ok) {
-        fetchPrayerRequests();
-      }
-    } catch (error) {
-      console.error("Error updating prayer request:", error);
-    }
+    const res = await fetch(`/api/prayer-requests/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) });
+    if (res.ok) fetchItems();
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this prayer request?")) return;
-
-    try {
-      const res = await fetch(`/api/prayer-requests/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        fetchPrayerRequests();
-      }
-    } catch (error) {
-      console.error("Error deleting prayer request:", error);
-    }
+    if (!confirm("Delete this prayer request?")) return;
+    const res = await fetch(`/api/prayer-requests/${id}`, { method: "DELETE" });
+    if (res.ok) fetchItems();
   };
 
   return (
@@ -80,44 +54,29 @@ export default function AdminPrayerRequestsPage() {
         </Select>
       </div>
 
-      {loading ? (
-        <div className="text-center py-12">Loading prayer requests...</div>
-      ) : (
+      {loading ? <div className="text-center py-12">Loading prayer requests...</div> : (
         <div className="space-y-4">
-          {prayerRequests.map((request) => (
-            <Card key={request._id}>
+          {items.map((r) => (
+            <Card key={r._id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">
-                      {request.name || "Anonymous"}
-                    </CardTitle>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(request.createdAt).toLocaleDateString()}
-                    </p>
+                    <CardTitle className="text-lg">{r.name || "Anonymous"}</CardTitle>
+                    <p className="text-xs text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Select
-                      value={request.status}
-                      onChange={(e) => handleStatusUpdate(request._id, e.target.value)}
-                    >
+                    <Select value={r.status} onChange={(e) => handleStatusUpdate(r._id, e.target.value)}>
                       <option value="pending">Pending</option>
                       <option value="answered">Answered</option>
                       <option value="archived">Archived</option>
                     </Select>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(request._id)}
-                    >
+                    <Button variant="destructive" size="sm" onClick={() => handleDelete(r._id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{request.request}</p>
-              </CardContent>
+              <CardContent><p className="text-muted-foreground">{r.request}</p></CardContent>
             </Card>
           ))}
         </div>
@@ -125,4 +84,3 @@ export default function AdminPrayerRequestsPage() {
     </div>
   );
 }
-

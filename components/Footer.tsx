@@ -54,7 +54,7 @@ const Footer = () => {
                 <span>
                   Remera Church of the Nazarene
                   <br />
-                  Boulevard de l'Aeroport Road
+                  Boulevard de l&apos;Aeroport Road
                   <br />
                   Amahoro Village, Rukiri II Cell - Remera Sector
                   <br />
@@ -64,7 +64,7 @@ const Footer = () => {
 
               <li className="flex items-center space-x-2">
                 <Phone className="h-4 w-4" />
-                <span>(555) 123-4567</span>
+                <span>+250 783 776 948</span>
               </li>
 
               <li className="flex items-center space-x-2">

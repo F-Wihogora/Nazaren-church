@@ -17,48 +17,44 @@ interface Ministry {
   images: string[];
 }
 
+const leaders: Leader[] = [
+  { name: "Pastor Jacques Niyonsaba", role: "Senior Pastor", image: "/images/jacques.png" },
+  { name: "Pastor Mbonigaba Diedonne", role: "Pastor", image: "/images/mbonigaba.png" },
+  { name: "Pastor Agnes Nyirabigabiro", role: "Pastor", image: "/images/agnes.png" },
+  { name: "Pastor Marcelline Muhimakazi", role: "Pastor", image: "/images/marcelline.png" },
+];
+
+const ministries: Ministry[] = [
+  {
+    title: "NDI – Nazarene Discipleship International",
+    description: "Learning the Word of God and preparing people to become excellent teachers of Christ.",
+    images: ["/ministries/ministry1.png", "/ministries/ministry2.png", "/ministries/ministry3.png"],
+  },
+  {
+    title: "NYI – Nazarene Youth International",
+    description: "Youth ministry focused on spiritual growth, fellowship, worship, and service.",
+    images: ["/ministries/nyi.png", "/ministries/nyi2.png", "/ministries/nyi3.png", "/ministries/nyi1.png"],
+  },
+  {
+    title: "NCM – Nazarene Compassionate Ministries",
+    description: "Helping the vulnerable, supporting low-income families and students, and demonstrating Christ's love through action.",
+    images: ["/ministries/ncm.png"],
+  },
+  {
+    title: "NMI – Nazarene Missions International",
+    description: "Mission outreach and evangelism locally and internationally.",
+    images: ["/ministries/nmi1 (1).png", "/ministries/nmi1 (2).png"],
+  },
+  {
+    title: "Children Ministry",
+    description: "Training children in the path of salvation while they are still young.",
+    images: ["/ministries/IMGL9842.jpg", "/ministries/IMGL9843_1.jpg"],
+  },
+];
+
 export default function AboutPage() {
-  const leaders: Leader[] = [
-    { name: "Pastor Jacques Niyonsaba", role: "Senior Pastor", image: "/images/jacques.png" },
-    { name: "Pastor Mbonigaba Diedonne", role: "Pastor", image: "/images/mbonigaba.png" },
-    { name: "Pastor Agnes Nyirabigabiro", role: "Pastor", image: "/images/agnes.png" },
-    { name: "Pastor Marcelline Muhimakazi", role: "Pastor", image: "/images/marcelline.png" },
-  ];
+  const [currentImages, setCurrentImages] = useState<number[]>(ministries.map(() => 0));
 
-  const ministries: Ministry[] = [
-    {
-      title: "NDI – Nazarene Discipleship International",
-      description: "Learning the Word of God and preparing people to become excellent teachers of Christ.",
-      images: ["/ministries/ministry1.png", "/ministries/ministry2.png", "/ministries/ministry3.png"],
-    },
-    {
-      title: "NYI – Nazarene Youth International",
-      description: "Youth ministry focused on spiritual growth, fellowship, worship, and service.",
-      images: ["/ministries/nyi.png", "/ministries/nyi2.png", "/ministries/nyi3.png", "/ministries/nyi4.png", "/ministries/nyi1.png"],
-    },
-    {
-      title: "NCM – Nazarene Compassionate Ministries",
-      description: "Helping the vulnerable, supporting low-income families and students, and demonstrating Christ’s love through action.",
-      images: ["/ministries/ncm.png", "/ministries/ncm2.png", "/ministries/ncm3.png"],
-    },
-    {
-      title: "NMI – Nazarene Missions International",
-      description: "Mission outreach and evangelism locally and internationally.",
-      images: ["/ministries/nmi.jpg", "/ministries/nmi2.jpg", "/ministries/nmi3.jpg"],
-    },
-    {
-      title: "Children Ministry",
-      description: "Training children in the path of salvation while they are still young.",
-      images: ["/ministries/children.jpg", "/ministries/children2.jpg", "/ministries/children3.jpg"],
-    },
-  ];
-
-  // State for current image index for each ministry
-  const [currentImages, setCurrentImages] = useState<number[]>(
-    ministries.map(() => 0)
-  );
-
-  // Auto cycle images every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImages((prev) =>
@@ -68,13 +64,10 @@ export default function AboutPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handlers for manual navigation
   const handlePrev = (index: number) => {
     setCurrentImages((prev) =>
       prev.map((imgIndex, i) =>
-        i === index
-          ? (imgIndex - 1 + ministries[i].images.length) % ministries[i].images.length
-          : imgIndex
+        i === index ? (imgIndex - 1 + ministries[i].images.length) % ministries[i].images.length : imgIndex
       )
     );
   };
@@ -82,28 +75,21 @@ export default function AboutPage() {
   const handleNext = (index: number) => {
     setCurrentImages((prev) =>
       prev.map((imgIndex, i) =>
-        i === index
-          ? (imgIndex + 1) % ministries[i].images.length
-          : imgIndex
+        i === index ? (imgIndex + 1) % ministries[i].images.length : imgIndex
       )
     );
   };
 
   return (
     <div className="container mx-auto px-4 py-12">
-      {/* Page Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">About Nazarene Church</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           A vibrant community of believers dedicated to serving God and spreading His love
         </p>
       </motion.div>
 
-      {/* Mission Statement */}
+      {/* Mission */}
       <section className="mb-16">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <Card>
@@ -116,7 +102,7 @@ export default function AboutPage() {
             <CardContent>
               <p className="text-lg text-muted-foreground">
                 To glorify God by making disciples of all nations through the proclamation of the Gospel,
-                the teaching of God's Word, and the demonstration of Christ's love in our community and beyond.
+                the teaching of God&apos;s Word, and the demonstration of Christ&apos;s love in our community and beyond.
               </p>
             </CardContent>
           </Card>
@@ -135,7 +121,7 @@ export default function AboutPage() {
             </CardHeader>
             <CardContent>
               <p className="text-lg text-muted-foreground">
-                To be a church where every person experiences the transforming power of God's love,
+                To be a church where every person experiences the transforming power of God&apos;s love,
                 grows in their relationship with Christ, and is equipped to serve others with compassion and excellence.
               </p>
             </CardContent>
@@ -143,7 +129,7 @@ export default function AboutPage() {
         </motion.div>
       </section>
 
-      {/* Bible Verse */}
+      {/* Foundation */}
       <section className="mb-16">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <Card className="bg-primary/10 border-primary/20">
@@ -172,24 +158,14 @@ export default function AboutPage() {
             <span>Leadership Team</span>
           </h2>
         </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {leaders.map((leader, index) => (
-            <motion.div
-              key={leader.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-            >
+            <motion.div key={leader.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
               <Card>
                 <CardHeader className="flex flex-col items-center">
-                  <img
-                    src={leader.image}
-                    alt={leader.name}
-                    className="w-32 h-32 object-cover rounded-full mb-4"
-                  />
-                  <CardTitle>{leader.name}</CardTitle>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={leader.image} alt={leader.name} className="w-32 h-32 object-cover rounded-full mb-4" />
+                  <CardTitle className="text-center">{leader.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground text-center">{leader.role}</p>
@@ -200,38 +176,24 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* MINISTRIES SECTION WITH SLIDESHOW & NAVIGATION */}
-      <section className="py-20 bg-gray-50 rounded-xl">
+      {/* Ministries */}
+      <section className="py-20 bg-secondary/30 rounded-xl">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">Our Ministries</h2>
-
           {ministries.map((ministry, index) => (
-            <div
-              key={ministry.title}
-              className="grid md:grid-cols-2 gap-10 items-center mb-20"
-            >
+            <div key={ministry.title} className="grid md:grid-cols-2 gap-10 items-center mb-20">
               <div>
                 <h3 className="text-3xl font-semibold mb-4">{ministry.title}</h3>
-                <p className="text-gray-700 text-lg mb-4">{ministry.description}</p>
-
-                {/* Navigation Buttons */}
+                <p className="text-muted-foreground text-lg mb-4">{ministry.description}</p>
                 <div className="flex space-x-4 mt-4">
-                  <button
-                    onClick={() => handlePrev(index)}
-                    className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
-                  >
+                  <button onClick={() => handlePrev(index)} className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition">
                     Previous
                   </button>
-                  <button
-                    onClick={() => handleNext(index)}
-                    className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
-                  >
+                  <button onClick={() => handleNext(index)} className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition">
                     Next
                   </button>
                 </div>
               </div>
-
-              {/* Slideshow */}
               <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden shadow-lg">
                 <AnimatePresence mode="wait">
                   <motion.img

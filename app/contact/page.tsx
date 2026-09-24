@@ -10,38 +10,29 @@ import { Label } from "@/components/ui/label";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
-
+    setError("");
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       if (res.ok) {
         setSubmitted(true);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          message: "",
-        });
+        setFormData({ name: "", email: "", phone: "", message: "" });
+      } else {
+        setError("Failed to send message. Please try again.");
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    } catch {
+      setError("An error occurred. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -49,85 +40,58 @@ export default function ContactPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
-        <p className="text-lg text-muted-foreground">
-          We&apos;d love to hear from you. Get in touch with us!
-        </p>
+        <p className="text-lg text-muted-foreground">We&apos;d love to hear from you. Get in touch with us!</p>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Contact Information */}
         <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Get In Touch</CardTitle>
-            </CardHeader>
-
+            <CardHeader><CardTitle>Get In Touch</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-              {/* Address */}
               <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-primary mt-1" />
+                <MapPin className="h-5 w-5 text-primary mt-1 shrink-0" />
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-muted-foreground">
-                    Remera Church of the Nazarene
-                    <br />
-                    Boulevard de l&apos;Aeroport Road
-                    <br />
-                    Amahoro Village, Rukiri II Cell – Remera Sector
-                    <br />
+                    Remera Church of the Nazarene<br />
+                    Boulevard de l&apos;Aeroport Road<br />
+                    Amahoro Village, Rukiri II Cell – Remera Sector<br />
                     KN5 Rd, KG109 St. Kigali, Rwanda
                   </p>
                 </div>
               </div>
-
-              {/* Phone */}
               <div className="flex items-start space-x-3">
-                <Phone className="h-5 w-5 text-primary mt-1" />
+                <Phone className="h-5 w-5 text-primary mt-1 shrink-0" />
                 <div>
                   <p className="font-semibold">Phone</p>
-                  <p className="text-muted-foreground">(555) 123-4567</p>
+                  <p className="text-muted-foreground">+250 783 776 948</p>
                 </div>
               </div>
-
-              {/* Email */}
               <div className="flex items-start space-x-3">
-                <Mail className="h-5 w-5 text-primary mt-1" />
+                <Mail className="h-5 w-5 text-primary mt-1 shrink-0" />
                 <div>
                   <p className="font-semibold">Email</p>
-                  <p className="text-muted-foreground">
-                    info@nazarenechurch.com
-                  </p>
+                  <p className="text-muted-foreground">info@nazarenechurch.com</p>
                 </div>
               </div>
-
-              {/* Service Times */}
               <div className="flex items-start space-x-3">
-                <Clock className="h-5 w-5 text-primary mt-1" />
+                <Clock className="h-5 w-5 text-primary mt-1 shrink-0" />
                 <div>
                   <p className="font-semibold">Service Times</p>
                   <p className="text-muted-foreground">
-                    Sunday: 9:00 AM &amp; 11:00 AM
-                    <br />
-                    Wednesday: 7:00 PM
+                    Sunday: 8:00 AM – 12:00 PM<br />
+                    Tuesday: 5:00 AM – 7:00 AM<br />
+                    Friday: 5:00 PM – 7:00 PM
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Map */}
           <Card>
-            <CardHeader>
-              <CardTitle>Map</CardTitle>
-            </CardHeader>
-
+            <CardHeader><CardTitle>Map</CardTitle></CardHeader>
             <CardContent>
               <div className="w-full h-64 rounded-lg overflow-hidden">
                 <iframe
@@ -143,83 +107,35 @@ export default function ContactPage() {
           </Card>
         </div>
 
-        {/* Contact Form */}
         <Card>
-          <CardHeader>
-            <CardTitle>Send Us a Message</CardTitle>
-          </CardHeader>
-
+          <CardHeader><CardTitle>Send Us a Message</CardTitle></CardHeader>
           <CardContent>
             {submitted ? (
               <div className="text-center py-8">
-                <p className="text-lg font-semibold text-primary mb-2">
-                  Thank you for your message!
-                </p>
-                <p className="text-muted-foreground">
-                  We&apos;ll get back to you as soon as possible.
-                </p>
+                <p className="text-lg font-semibold text-primary mb-2">Thank you for your message!</p>
+                <p className="text-muted-foreground">We&apos;ll get back to you as soon as possible.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">{error}</div>}
                 <div>
                   <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    required
-                  />
+                  <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                 </div>
-
                 <div>
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    required
-                  />
+                  <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
                 </div>
-
                 <div>
                   <Label htmlFor="phone">Phone (Optional)</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                  />
+                  <Input id="phone" type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
                 </div>
-
                 <div>
                   <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    rows={6}
-                    value={formData.message}
-                    onChange={(e) =>
-                      setFormData({ ...formData, message: e.target.value })
-                    }
-                    required
-                  />
+                  <Textarea id="message" rows={6} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} required />
                 </div>
-
                 <Button type="submit" className="w-full" disabled={submitting}>
-                  {submitting ? (
-                    "Sending..."
-                  ) : (
-                    <>
-                      <Send className="mr-2 h-4 w-4" />
-                      Send Message
-                    </>
-                  )}
+                  {submitting ? "Sending..." : <><Send className="mr-2 h-4 w-4" />Send Message</>}
                 </Button>
               </form>
             )}
