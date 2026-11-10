@@ -75,9 +75,11 @@ function getYouTubeId(url?: string): string | null {
 }
 
 const heroSlides = [
-  "/images/imgl1213.webp",
-  "/images/imgl1002.webp",
-  "/images/choir.webp",
+  "/images/home_hero_1.webp",
+  "/images/home_hero_2.webp",
+  "/images/home_hero_3.webp",
+  "/images/home_hero_4.webp",
+  "/images/home_hero_5.webp",
 ];
 
 export default function HomePage() {
@@ -90,7 +92,7 @@ export default function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setBgIndex((prev) => (prev + 1) % heroSlides.length);
-    }, 5500);
+    }, 7000);
     return () => clearInterval(interval);
   }, []);
 
@@ -212,6 +214,20 @@ export default function HomePage() {
               </div>
             </div>
           </motion.div>
+        </div>
+        <div className="absolute bottom-5 left-1/2 z-20 -translate-x-1/2">
+          <div role="group" aria-label="Welcome photos" className="flex items-center gap-2 rounded-full bg-black/30 px-3 py-2 backdrop-blur-sm">
+            {heroSlides.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                aria-label={`Show welcome photo ${index + 1}`}
+                aria-pressed={bgIndex === index}
+                onClick={() => setBgIndex(index)}
+                className={`h-2.5 rounded-full transition-all ${bgIndex === index ? "w-7 bg-white" : "w-2.5 bg-white/60 hover:bg-white"}`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
