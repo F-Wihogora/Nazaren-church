@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
+import { requireAdmin } from "@/lib/auth";
 import SmallGroup from "@/models/SmallGroup";
 
 export async function GET(request: NextRequest) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const smallGroups = await SmallGroup.find().populate("members").sort({ name: 1 });
@@ -13,6 +16,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const body = await request.json();

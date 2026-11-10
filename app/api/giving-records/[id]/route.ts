@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
+import { requireAdmin } from "@/lib/auth";
 import GivingRecord from "@/models/GivingRecord";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const body = await request.json();
@@ -23,6 +26,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const givingRecord = await GivingRecord.findByIdAndDelete(params.id);

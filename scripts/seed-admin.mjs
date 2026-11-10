@@ -44,28 +44,31 @@ const AdminUser =
   mongoose.models.AdminUser || mongoose.model("AdminUser", AdminUserSchema);
 
 async function seed() {
+  const email = (process.env.ADMIN_EMAIL || "admin@nazarene.org").trim().toLowerCase();
+  const password = process.env.ADMIN_PASSWORD || "AdminPassword2026!";
+  const name = process.env.ADMIN_NAME || "Church Administrator";
+  if (!email || !password || password.length < 12) {
+    throw new Error("Set ADMIN_EMAIL and a unique ADMIN_PASSWORD of at least 12 characters before seeding.");
+  }
+
   await mongoose.connect(MONGODB_URI);
   console.log("✅  Connected to MongoDB");
-
-  const existing = await AdminUser.findOne({ email: "admin@nazarene.church" });
+  const existing = await AdminUser.findOne({ email });
   if (existing) {
     console.log("ℹ️   Admin user already exists — skipping.");
     await mongoose.disconnect();
     return;
   }
 
-  const hashed = await bcrypt.hash("Admin@123", 10);
+  const hashed = await bcrypt.hash(password, 12);
   await AdminUser.create({
-    email: "admin@nazarene.church",
+    email,
     password: hashed,
-    name: "Administrator",
+    name,
     role: "superadmin",
   });
 
-  console.log("✅  Admin user created:");
-  console.log("    Email:    admin@nazarene.church");
-  console.log("    Password: Admin@123");
-  console.log("    ⚠️  Change the password after first login!");
+  console.log("✅  Admin user created for", email);
   await mongoose.disconnect();
 }
 

@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
+import { requireAdmin } from "@/lib/auth";
 import Member from "@/models/Member";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const member = await Member.findById(params.id).populate("ministries");
@@ -22,6 +25,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const body = await request.json();
@@ -41,6 +46,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const member = await Member.findByIdAndDelete(params.id);

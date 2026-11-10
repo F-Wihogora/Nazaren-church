@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { Plus, Edit, Trash2, X, Search } from "lucide-react";
+import { Plus, Edit, Trash2, X, Search, Download } from "lucide-react";
+import { downloadCsv } from "@/lib/csv";
+import { CHURCH_DIVISIONS, CHURCH_ROLES } from "@/lib/church-constants";
 
 interface Member {
   _id?: string;
@@ -15,10 +17,15 @@ interface Member {
   gender: "Male" | "Female" | "Other";
   phone?: string;
   email?: string;
+  address?: string;
   birthday?: string;
+  dateJoined?: string;
   baptismStatus: boolean;
+  division?: string;
   role: string;
+  churchRoles?: { role: string; status: string }[];
   ministries: string[];
+  family?: { _id: string; name: string };
   notes?: string;
 }
 
@@ -30,13 +37,18 @@ export default function AdminMembersPage() {
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [divisionFilter, setDivisionFilter] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(["Member"]);
   const [formData, setFormData] = useState<Member>({
     fullName: "",
     gender: "Male",
     phone: "",
     email: "",
+    address: "",
     birthday: "",
+    dateJoined: "",
     baptismStatus: false,
+    division: "General",
     role: "Member",
     ministries: [],
     notes: "",
@@ -83,6 +95,9 @@ export default function AdminMembersPage() {
         body: JSON.stringify({
           ...formData,
           birthday: formData.birthday || undefined,
+          dateJoined: formData.dateJoined || undefined,
+          role: selectedRoles[0] || formData.role || "Member",
+          churchRoles: selectedRoles.map((role) => ({ role, status: "active", assignedAt: new Date() })),
         }),
       });
 
@@ -110,10 +125,14 @@ export default function AdminMembersPage() {
 
   const handleEdit = (member: Member) => {
     setEditingMember(member);
+    const roles = member.churchRoles?.map((r) => r.role) || [member.role];
+    setSelectedRoles(roles);
     setFormData({
       ...member,
       birthday: member.birthday ? member.birthday.split("T")[0] : "",
+      dateJoined: member.dateJoined ? member.dateJoined.split("T")[0] : "",
       ministries: member.ministries || [],
+      division: member.division || "General",
     });
     setShowForm(true);
   };
@@ -124,14 +143,22 @@ export default function AdminMembersPage() {
       gender: "Male",
       phone: "",
       email: "",
+      address: "",
       birthday: "",
+      dateJoined: "",
       baptismStatus: false,
+      division: "General",
       role: "Member",
       ministries: [],
       notes: "",
     });
+    setSelectedRoles(["Member"]);
     setEditingMember(null);
     setShowForm(false);
+  };
+
+  const toggleRole = (role: string) => {
+    setSelectedRoles((prev) => (prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]));
   };
 
   const filteredMembers = members.filter((member) => {
@@ -139,18 +166,44 @@ export default function AdminMembersPage() {
       member.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.phone?.includes(searchTerm);
-    const matchesRole = !roleFilter || member.role === roleFilter;
-    return matchesSearch && matchesRole;
+    const roles = member.churchRoles?.map((r) => r.role) || [member.role];
+    const matchesRole = !roleFilter || roles.includes(roleFilter);
+    const matchesDivision = !divisionFilter || member.division === divisionFilter;
+    return matchesSearch && matchesRole && matchesDivision;
   });
+
+  const exportMembers = () => {
+    downloadCsv(
+      `members-${new Date().toISOString().slice(0, 10)}.csv`,
+        ["Full Name", "Email", "Phone", "Division", "Roles", "Gender", "Baptized", "Family", "Notes"],
+      filteredMembers.map((m) => [
+        m.fullName,
+        m.email || "",
+        m.phone || "",
+        m.division || "",
+        (m.churchRoles?.map((r) => r.role) || [m.role]).join("; "),
+        m.gender,
+        m.baptismStatus ? "Yes" : "No",
+        m.family?.name || "",
+        m.notes || "",
+      ])
+    );
+  };
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
         <h2 className="text-2xl font-bold">Manage Members</h2>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Member
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportMembers} disabled={!filteredMembers.length}>
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Member
+          </Button>
+        </div>
       </div>
 
       <div className="mb-6 flex gap-4">
@@ -163,15 +216,13 @@ export default function AdminMembersPage() {
             className="pl-10"
           />
         </div>
+        <Select value={divisionFilter} onChange={(e) => setDivisionFilter(e.target.value)}>
+          <option value="">All Divisions</option>
+          {CHURCH_DIVISIONS.map((d) => <option key={d} value={d}>{d}</option>)}
+        </Select>
         <Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
           <option value="">All Roles</option>
-          <option value="Pastor">Pastor</option>
-          <option value="Elder">Elder</option>
-          <option value="Usher">Usher</option>
-          <option value="Choir">Choir</option>
-          <option value="Media">Media</option>
-          <option value="Member">Member</option>
-          <option value="Visitor">Visitor</option>
+          {CHURCH_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
         </Select>
       </div>
 
@@ -243,20 +294,31 @@ export default function AdminMembersPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="role">Role</Label>
-                  <Select
-                    id="role"
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  >
-                    <option value="Pastor">Pastor</option>
-                    <option value="Elder">Elder</option>
-                    <option value="Usher">Usher</option>
-                    <option value="Choir">Choir</option>
-                    <option value="Media">Media</option>
-                    <option value="Member">Member</option>
-                    <option value="Visitor">Visitor</option>
+                  <Label htmlFor="division">Division</Label>
+                  <Select id="division" value={formData.division || "General"} onChange={(e) => setFormData({ ...formData, division: e.target.value })}>
+                    {CHURCH_DIVISIONS.map((d) => <option key={d} value={d}>{d}</option>)}
                   </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="dateJoined">Date joined church</Label>
+                  <Input id="dateJoined" type="date" value={formData.dateJoined || ""} onChange={(e) => setFormData({ ...formData, dateJoined: e.target.value })} />
+                </div>
+                <div>
+                  <Label htmlFor="address">Address</Label>
+                  <Input id="address" value={formData.address || ""} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
+                </div>
+              </div>
+              <div>
+                <Label>Church roles (select all that apply)</Label>
+                <div className="mt-2 grid sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {CHURCH_ROLES.map((role) => (
+                    <label key={role} className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={selectedRoles.includes(role)} onChange={() => toggleRole(role)} />
+                      {role}
+                    </label>
+                  ))}
                 </div>
               </div>
               <div>
@@ -303,8 +365,9 @@ export default function AdminMembersPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-2">
-                  {member.role} • {member.gender}
+                  {member.division || "General"} • {(member.churchRoles?.map((r) => r.role) || [member.role]).join(", ")}
                 </p>
+                {member.family?.name && <p className="text-xs text-primary mb-1">Family: {member.family.name}</p>}
                 {member.email && <p className="text-xs text-muted-foreground">{member.email}</p>}
                 {member.phone && <p className="text-xs text-muted-foreground">{member.phone}</p>}
                 <div className="flex gap-2 mt-4">

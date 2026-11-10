@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { Plus, Edit, Trash2, X } from "lucide-react";
+import { Plus, Edit, Trash2, X, Download } from "lucide-react";
+import { downloadCsv } from "@/lib/csv";
 
 interface GivingRecord {
   _id?: string;
@@ -70,14 +71,31 @@ export default function AdminGivingPage() {
 
   const total = records.reduce((sum, r) => sum + (r.amount || 0), 0);
 
+  const exportRecords = () => {
+    downloadCsv(
+      `giving-records-${new Date().toISOString().slice(0, 10)}.csv`,
+      ["Name", "Amount (RWF)", "Purpose", "Date", "Notes"],
+      records.map((r) => [
+        r.name,
+        String(r.amount),
+        r.purpose,
+        r.date.split("T")[0],
+        r.notes || "",
+      ])
+    );
+  };
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
         <div>
           <h2 className="text-2xl font-bold">Giving Records</h2>
           <p className="text-muted-foreground">Total: RWF {total.toLocaleString()}</p>
         </div>
-        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" />Add Record</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportRecords} disabled={!records.length}><Download className="mr-2 h-4 w-4" />Export CSV</Button>
+          <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" />Add Record</Button>
+        </div>
       </div>
 
       {showForm && (

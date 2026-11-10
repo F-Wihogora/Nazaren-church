@@ -1,217 +1,338 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Users, BookOpen, Target } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Heart,
+  Users,
+  BookOpen,
+  Target,
+  Sparkles,
+  MapPin,
+  Clock,
+  Compass,
+  ArrowRight,
+  ShieldCheck,
+  Globe2,
+} from "lucide-react";
+import { publicAssetPath } from "@/lib/media-path";
+import ChurchImage from "@/components/ChurchImage";
 
 interface Leader {
   name: string;
   role: string;
   image: string;
+  bio: string;
 }
 
 interface Ministry {
-  title: string;
+  _id: string;
+  name: string;
+  leader: string;
   description: string;
-  images: string[];
+  meetingSchedule?: string;
+  division?: string;
+  image?: string;
 }
 
 const leaders: Leader[] = [
-  { name: "Pastor Jacques Niyonsaba", role: "Senior Pastor", image: "/images/jacques.png" },
-  { name: "Pastor Mbonigaba Diedonne", role: "Pastor", image: "/images/mbonigaba.png" },
-  { name: "Pastor Agnes Nyirabigabiro", role: "Pastor", image: "/images/agnes.png" },
-  { name: "Pastor Marcelline Muhimakazi", role: "Pastor", image: "/images/marcelline.png" },
-];
-
-const ministries: Ministry[] = [
   {
-    title: "NDI – Nazarene Discipleship International",
-    description: "Learning the Word of God and preparing people to become excellent teachers of Christ.",
-    images: ["/ministries/ministry1.png", "/ministries/ministry2.png", "/ministries/ministry3.png"],
+    name: "Pastor Jacques Niyonsaba",
+    role: "Senior Pastor",
+    image: "/images/jacques.png",
+    bio: "Senior Pastor providing spiritual oversight, expository biblical preaching, and vision for discipleship at Remera Church.",
   },
   {
-    title: "NYI – Nazarene Youth International",
-    description: "Youth ministry focused on spiritual growth, fellowship, worship, and service.",
-    images: ["/ministries/nyi.png", "/ministries/nyi2.png", "/ministries/nyi3.png", "/ministries/nyi1.png"],
+    name: "Pastor Mbonigaba Diedonne",
+    role: "Associate Pastor",
+    image: "/images/mbonigaba.png",
+    bio: "Dedicated to pastoral care, evangelistic outreach, family counseling, and equipping leaders across church ministries.",
   },
   {
-    title: "NCM – Nazarene Compassionate Ministries",
-    description: "Helping the vulnerable, supporting low-income families and students, and demonstrating Christ's love through action.",
-    images: ["/ministries/ncm.png"],
+    name: "Pastor Agnes Nyirabigabiro",
+    role: "Associate Pastor",
+    image: "/images/agnes.png",
+    bio: "Passionate about women's discipleship, intercessory prayer gatherings, and compassionate community ministry.",
   },
   {
-    title: "NMI – Nazarene Missions International",
-    description: "Mission outreach and evangelism locally and internationally.",
-    images: ["/ministries/nmi1 (1).png", "/ministries/nmi1 (2).png"],
-  },
-  {
-    title: "Children Ministry",
-    description: "Training children in the path of salvation while they are still young.",
-    images: ["/ministries/IMGL9842.jpg", "/ministries/IMGL9843_1.jpg"],
+    name: "Pastor Marcelline Muhimakazi",
+    role: "Associate Pastor",
+    image: "/images/marcelline.png",
+    bio: "Leading children and family ministries, encouraging the next generation to grow in Christ-centered holiness.",
   },
 ];
 
 export default function AboutPage() {
-  const [currentImages, setCurrentImages] = useState<number[]>(ministries.map(() => 0));
+  const [ministries, setMinistries] = useState<Ministry[]>([]);
+  const [loadingMinistries, setLoadingMinistries] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImages((prev) =>
-        prev.map((imgIndex, i) => (imgIndex + 1) % ministries[i].images.length)
-      );
-    }, 4000);
-    return () => clearInterval(interval);
+    fetch("/api/ministries")
+      .then((r) => r.json())
+      .then((data) => setMinistries(data.ministries || []))
+      .catch((err) => console.error("Error fetching ministries:", err))
+      .finally(() => setLoadingMinistries(false));
   }, []);
 
-  const handlePrev = (index: number) => {
-    setCurrentImages((prev) =>
-      prev.map((imgIndex, i) =>
-        i === index ? (imgIndex - 1 + ministries[i].images.length) % ministries[i].images.length : imgIndex
-      )
-    );
-  };
-
-  const handleNext = (index: number) => {
-    setCurrentImages((prev) =>
-      prev.map((imgIndex, i) =>
-        i === index ? (imgIndex + 1) % ministries[i].images.length : imgIndex
-      )
-    );
-  };
-
   return (
-    <div className="container mx-auto px-4 py-12">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">About Nazarene Church</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          A vibrant community of believers dedicated to serving God and spreading His love
-        </p>
-      </motion.div>
-
-      {/* Mission */}
-      <section className="mb-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl flex items-center space-x-2">
-                <Target className="h-6 w-6" />
-                <span>Our Mission</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg text-muted-foreground">
-                To glorify God by making disciples of all nations through the proclamation of the Gospel,
-                the teaching of God&apos;s Word, and the demonstration of Christ&apos;s love in our community and beyond.
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </section>
-
-      {/* Vision */}
-      <section className="mb-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl flex items-center space-x-2">
-                <Heart className="h-6 w-6" />
-                <span>Our Vision</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg text-muted-foreground">
-                To be a church where every person experiences the transforming power of God&apos;s love,
-                grows in their relationship with Christ, and is equipped to serve others with compassion and excellence.
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </section>
-
-      {/* Foundation */}
-      <section className="mb-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <Card className="bg-primary/10 border-primary/20">
-            <CardHeader>
-              <CardTitle className="text-2xl flex items-center space-x-2">
-                <BookOpen className="h-6 w-6" />
-                <span>Our Foundation</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl italic text-center mb-4">
-                &quot;For I know the plans I have for you,&quot; declares the Lord, &quot;plans to prosper you
-                and not to harm you, plans to give you hope and a future.&quot;
-              </p>
-              <p className="text-center text-muted-foreground">— Jeremiah 29:11 (NIV)</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </section>
-
-      {/* Leadership */}
-      <section className="mb-20">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-4 flex items-center justify-center space-x-2">
-            <Users className="h-8 w-8" />
-            <span>Leadership Team</span>
-          </h2>
-        </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {leaders.map((leader, index) => (
-            <motion.div key={leader.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
-              <Card>
-                <CardHeader className="flex flex-col items-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={leader.image} alt={leader.name} className="w-32 h-32 object-cover rounded-full mb-4" />
-                  <CardTitle className="text-center">{leader.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-center">{leader.role}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Ministries */}
-      <section className="py-20 bg-secondary/30 rounded-xl">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Our Ministries</h2>
-          {ministries.map((ministry, index) => (
-            <div key={ministry.title} className="grid md:grid-cols-2 gap-10 items-center mb-20">
-              <div>
-                <h3 className="text-3xl font-semibold mb-4">{ministry.title}</h3>
-                <p className="text-muted-foreground text-lg mb-4">{ministry.description}</p>
-                <div className="flex space-x-4 mt-4">
-                  <button onClick={() => handlePrev(index)} className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition">
-                    Previous
-                  </button>
-                  <button onClick={() => handleNext(index)} className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition">
-                    Next
-                  </button>
-                </div>
-              </div>
-              <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden shadow-lg">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentImages[index]}
-                    src={ministry.images[currentImages[index]]}
-                    alt={ministry.title}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="absolute w-full h-full object-cover rounded-xl"
-                  />
-                </AnimatePresence>
-              </div>
+    <div className="min-h-screen bg-background">
+      {/* Hero Header */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-primary/15 via-primary/5 to-background border-b py-16 sm:py-24">
+        <div className="container mx-auto px-4 max-w-5xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-4"
+          >
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span>Remera Church of the Nazarene</span>
             </div>
-          ))}
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
+              A Community Anchored in Christ &amp; Holiness
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              We are a warm, welcoming church family in Kigali, Rwanda, dedicated to preaching the Gospel of Jesus Christ, nurturing disciples, and walking in genuine love and holiness.
+            </p>
+          </motion.div>
         </div>
       </section>
+
+      <div className="container mx-auto px-4 py-16 max-w-6xl space-y-20">
+        {/* Mission & Vision Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex"
+          >
+            <Card className="rounded-3xl border border-border/80 p-8 shadow-sm flex flex-col justify-between w-full bg-card">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                  <Target className="h-6 w-6" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground">Our Mission</h2>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  To glorify God by making Christlike disciples in our community and throughout the nations. We pursue this through biblical preaching, sincere worship, compassionate service, and nurturing deep spiritual transformation.
+                </p>
+              </div>
+              <div className="pt-6 border-t mt-6 text-xs text-primary font-medium">
+                Matthew 28:19–20 • The Great Commission
+              </div>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="flex"
+          >
+            <Card className="rounded-3xl border border-border/80 p-8 shadow-sm flex flex-col justify-between w-full bg-card">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                  <Heart className="h-6 w-6" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground">Our Vision</h2>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  To be a thriving, multigenerational sanctuary where every person encounters God&apos;s transforming grace, finds belonging in Christian fellowship, and is equipped to serve society with integrity, compassion, and excellence.
+                </p>
+              </div>
+              <div className="pt-6 border-t mt-6 text-xs text-primary font-medium">
+                Holiness Unto The Lord • 1 Peter 1:15–16
+              </div>
+            </Card>
+          </motion.div>
+        </section>
+
+        {/* Biblical Foundation Quote Banner */}
+        <section className="rounded-3xl bg-gradient-to-r from-primary/15 via-primary/5 to-primary/10 border border-primary/20 p-8 sm:p-12 text-center max-w-4xl mx-auto shadow-sm">
+          <BookOpen className="h-8 w-8 text-primary mx-auto mb-4" />
+          <blockquote className="text-xl sm:text-2xl font-semibold italic text-foreground leading-relaxed">
+            &ldquo;For I know the plans I have for you,&rdquo; declares the Lord, &ldquo;plans to prosper you and not to harm you, plans to give you hope and a future.&rdquo;
+          </blockquote>
+          <cite className="block mt-4 text-sm font-medium text-primary not-italic">
+            — Jeremiah 29:11 (NIV)
+          </cite>
+        </section>
+
+        {/* Core Pillars / Values */}
+        <section className="space-y-8">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary px-3 py-1 rounded-full bg-primary/10">
+              What We Believe
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Our Core Convictions</h2>
+            <p className="text-sm text-muted-foreground">
+              Anchored in biblical Wesleyan-Holiness heritage and active in the heart of Kigali.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="rounded-3xl p-6 space-y-3 bg-card border border-border/80 shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <h3 className="font-bold text-base">Biblical Authority</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                The Holy Scriptures are God&apos;s inspired Word, containing all truth necessary for faith, salvation, and godly living.
+              </p>
+            </Card>
+
+            <Card className="rounded-3xl p-6 space-y-3 bg-card border border-border/80 shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <h3 className="font-bold text-base">Entire Sanctification</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                We believe in the sanctifying power of the Holy Spirit, cleansing our hearts and enabling believers to live in daily love and holiness.
+              </p>
+            </Card>
+
+            <Card className="rounded-3xl p-6 space-y-3 bg-card border border-border/80 shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <Globe2 className="h-5 w-5" />
+              </div>
+              <h3 className="font-bold text-base">Global &amp; Local Mission</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Called to take the Gospel of Jesus Christ across Kigali, throughout Rwanda, and to the unreached corners of the world.
+              </p>
+            </Card>
+          </div>
+        </section>
+
+        {/* Pastoral Leadership Team */}
+        <section className="space-y-10">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary px-3 py-1 rounded-full bg-primary/10">
+              Spiritual Shepherds
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Our Pastoral Team</h2>
+            <p className="text-sm text-muted-foreground">
+              Meet the pastors dedicated to prayer, counseling, teaching, and serving Remera Church of the Nazarene.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {leaders.map((leader, index) => (
+              <motion.div
+                key={leader.name}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+              >
+                <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 border border-border/80 group rounded-3xl bg-card flex flex-col justify-between">
+                  <div>
+                    <div className="relative w-full aspect-square overflow-hidden bg-muted">
+                      <img
+                        src={publicAssetPath(leader.image)}
+                        alt={leader.name}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                      <span className="absolute bottom-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-2.5 py-1 rounded-md shadow-sm">
+                        {leader.role}
+                      </span>
+                    </div>
+                    <CardHeader className="p-5 pb-2">
+                      <CardTitle className="text-base font-bold leading-snug">{leader.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-5 pt-0">
+                      <p className="text-xs text-muted-foreground leading-relaxed">{leader.bio}</p>
+                    </CardContent>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Ministries Section (Dynamic from DB) */}
+        <section id="ministries" className="space-y-8 scroll-mt-12">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary px-3 py-1 rounded-full bg-primary/10">
+              Active Departments
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Our Ministries</h2>
+            <p className="text-sm text-muted-foreground">
+              Every member has a place to serve, grow, and minister. Explore our vibrant departments.
+            </p>
+          </div>
+
+          {loadingMinistries ? (
+            <div className="py-12 text-center text-sm text-muted-foreground">
+              Loading church ministries...
+            </div>
+          ) : ministries.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {ministries.map((ministry) => (
+                <Card
+                  key={ministry._id}
+                  className="rounded-3xl border border-border/80 hover:border-primary/50 hover:shadow-lg transition-all p-6 space-y-4 bg-card flex flex-col justify-between"
+                >
+                  {ministry.image && (
+                    <ChurchImage
+                      src={ministry.image}
+                      alt={`${ministry.name} ministry`}
+                      className="w-full h-44 object-cover rounded-2xl mb-4"
+                    />
+                  )}
+                  <div className="space-y-2">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary">
+                      {ministry.division || "Ministry Department"}
+                    </span>
+                    <h3 className="font-bold text-lg text-foreground leading-snug">{ministry.name}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{ministry.description}</p>
+                  </div>
+
+                  <div className="pt-3 border-t space-y-1.5 text-xs text-muted-foreground">
+                    <p className="font-medium text-foreground">
+                      Leadership: <span className="font-normal text-muted-foreground">{ministry.leader}</span>
+                    </p>
+                    {ministry.meetingSchedule && (
+                      <p className="flex items-center gap-1.5 text-[11px]">
+                        <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span>{ministry.meetingSchedule}</span>
+                      </p>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="p-8 text-center bg-card rounded-2xl border text-muted-foreground text-sm">
+              Ministries are being updated. Check back shortly.
+            </div>
+          )}
+        </section>
+
+        {/* Call to Action Section */}
+        <section className="rounded-3xl bg-secondary/30 border p-8 sm:p-12 text-center space-y-6">
+          <h2 className="text-2xl sm:text-3xl font-bold">Ready to Experience Remera Nazarene?</h2>
+          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+            Whether you are exploring faith or looking for a home church in Kigali, our family is here to welcome you with joy.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link href="/contact">
+              <Button className="h-11 px-6 rounded-xl text-xs sm:text-sm font-semibold">
+                <MapPin className="mr-2 h-4 w-4" /> Plan Your Visit
+              </Button>
+            </Link>
+            <Link href="/visitor-registration">
+              <Button variant="outline" className="h-11 px-6 rounded-xl text-xs sm:text-sm font-semibold">
+                Register as a Visitor
+              </Button>
+            </Link>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

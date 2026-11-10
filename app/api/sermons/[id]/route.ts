@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
+import { requireAdmin } from "@/lib/auth";
 import Sermon from "@/models/Sermon";
 
 export async function GET(
@@ -22,6 +23,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const body = await request.json();
@@ -39,6 +42,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const sermon = await Sermon.findByIdAndDelete(params.id);

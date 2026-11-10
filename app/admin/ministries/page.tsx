@@ -15,9 +15,10 @@ interface Ministry {
   description: string;
   members: string[];
   meetingSchedule?: string;
+  image?: string;
 }
 
-const empty: Ministry = { name: "", leader: "", description: "", members: [], meetingSchedule: "" };
+const empty: Ministry = { name: "", leader: "", description: "", members: [], meetingSchedule: "", image: "" };
 
 export default function AdminMinistriesPage() {
   const [items, setItems] = useState<Ministry[]>([]);
@@ -51,7 +52,7 @@ export default function AdminMinistriesPage() {
 
   const handleEdit = (m: Ministry) => {
     setEditing(m);
-    setForm({ name: m.name, leader: m.leader, description: m.description, members: m.members || [], meetingSchedule: m.meetingSchedule || "" });
+    setForm({ name: m.name, leader: m.leader, description: m.description, members: m.members || [], meetingSchedule: m.meetingSchedule || "", image: m.image || "" });
     setShowForm(true);
   };
 
@@ -78,6 +79,11 @@ export default function AdminMinistriesPage() {
               <div><Label>Leader</Label><Input value={form.leader} onChange={(e) => setForm({ ...form, leader: e.target.value })} required /></div>
               <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} required /></div>
               <div><Label>Meeting Schedule</Label><Input value={form.meetingSchedule} onChange={(e) => setForm({ ...form, meetingSchedule: e.target.value })} placeholder="e.g., Every Sunday at 2:00 PM" /></div>
+              <div>
+                <Label htmlFor="ministry-image">Ministry photo path or image URL (optional)</Label>
+                <Input id="ministry-image" value={form.image || ""} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="/images/ministries/youth.webp" />
+                <p className="mt-1 text-xs text-muted-foreground">You can send the photo to the site editor to add it here.</p>
+              </div>
               <div className="flex gap-2">
                 <Button type="submit">{editing ? "Update" : "Create"}</Button>
                 <Button type="button" variant="outline" onClick={reset}>Cancel</Button>

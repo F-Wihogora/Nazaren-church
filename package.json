@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node init && next dev",
-    "build": "node init && next build",
-    "start": "node init && next start",
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "seed": "node scripts/seed-admin.mjs"
   },
@@ -13,7 +13,7 @@
     "@hookform/resolvers": "^3.3.4",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.0",
+    "clsx": "^2.1.1",
     "date-fns": "^3.3.1",
     "framer-motion": "^11.0.0",
     "lucide-react": "^0.344.0",

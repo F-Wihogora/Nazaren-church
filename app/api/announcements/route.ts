@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
+import { requireAdmin } from "@/lib/auth";
 import Announcement from "@/models/Announcement";
 
 export async function GET(request: NextRequest) {
+  if (request.nextUrl.searchParams.get("active") !== "true") {
+    const authError = requireAdmin(request);
+    if (authError) return authError;
+  }
   try {
     await connectDB();
     const searchParams = request.nextUrl.searchParams;
@@ -28,6 +33,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const authError = requireAdmin(request);
+  if (authError) return authError;
   try {
     await connectDB();
     const body = await request.json();

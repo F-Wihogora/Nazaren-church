@@ -24,6 +24,10 @@ A modern, dynamic, fully responsive church website built with Next.js 14 (App Ro
 - **Visitor Management**: View visitor registrations
 - **Giving Records**: Record and track donations (no payment gateway)
 - **Small Groups/Home Cells**: Manage small groups and home cells
+- **Member Portal**: Member registration, secure sign-in, and upcoming events (`/account`)
+- **Event RSVP**: Public RSVP on event detail pages; staff view RSVPs in admin
+- **Contact Inbox**: Admin view for contact form submissions
+- **CSV Export**: Members and giving records export for reporting
 
 ## Tech Stack
 
@@ -61,29 +65,19 @@ A modern, dynamic, fully responsive church website built with Next.js 14 (App Ro
    # Or for MongoDB Atlas:
    # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/nazarene-church
    
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-secret-key-here-change-in-production
+   NEXTAUTH_URL=http://localhost:3001
+   NEXTAUTH_SECRET=generate-a-unique-random-value-at-least-32-characters
    
    # Optional: Google Maps API key for map embed
    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
    ```
 
-4. **Create the first admin user**:
+4. **Create the first admin user** (use a unique password with at least 12 characters):
    Run the seed script to create your first admin user:
    ```bash
-   npm run seed-admin
+   ADMIN_EMAIL=admin@example.org ADMIN_PASSWORD='your-unique-password' ADMIN_NAME='Church Administrator' npm run seed
    ```
-   
-   Or with custom credentials:
-   ```bash
-   npm run seed-admin your-email@example.com your-password "Your Name"
-   ```
-   
-   Default credentials (if using default):
-   - Email: `admin@nazarenechurch.com`
-   - Password: `admin123`
-   
-   **Important**: Change the default password after first login!
+   On PowerShell, set `$env:ADMIN_EMAIL`, `$env:ADMIN_PASSWORD`, and `$env:ADMIN_NAME` first, then run `npm run seed`.
 
 5. **Run the development server**:
    ```bash
@@ -91,7 +85,11 @@ A modern, dynamic, fully responsive church website built with Next.js 14 (App Ro
    ```
 
 6. **Open your browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000)
+   Navigate to [http://localhost:3001](http://localhost:3001)
+
+Member self-registration and sign-in are available at `/account`. Authentication uses a signed, HTTP-only cookie. Keep `.env.local` out of source control and use a unique `NEXTAUTH_SECRET` of at least 32 characters in every environment. Rotate database credentials that have been shared and allow the production host in MongoDB network access before deployment.
+
+**Church staff:** see [docs/HANDOVER.md](docs/HANDOVER.md) for day-to-day operation instructions.
 
 ## Project Structure
 
@@ -165,8 +163,13 @@ All API routes are located in `app/api/`:
 - `/api/giving-records/[id]` - PUT, DELETE
 - `/api/small-groups` - GET, POST
 - `/api/small-groups/[id]` - GET, PUT, DELETE
-- `/api/contact` - POST
-- `/api/auth/login` - POST
+- `/api/contact` - GET (admin), POST
+- `/api/contact/[id]` - DELETE (admin)
+- `/api/admin/stats` - GET (admin dashboard)
+- `/api/events/[id]/rsvp` - GET (admin), POST (public)
+- `/api/auth/login` - POST (admin and member sign-in)
+- `/api/auth/signup` - POST (member registration)
+- `/api/auth/session` - GET, DELETE
 
 ## Deployment to Vercel
 
@@ -202,10 +205,7 @@ All API routes are located in `app/api/`:
 ## Admin Access
 
 1. Navigate to `/admin/login`
-2. Use the admin credentials you created
-3. Default credentials (if you set them up):
-   - Email: `admin@nazarenechurch.com`
-   - Password: (the password you hashed)
+2. Sign in with the administrator account created by `npm run seed`.
 
 ## Customization
 
@@ -229,8 +229,8 @@ All API routes are located in `app/api/`:
 - [ ] Payment gateway integration for online giving
 - [ ] Email notifications for prayer requests
 - [ ] SMS notifications for events
-- [ ] Member portal with personal dashboard
-- [ ] Event RSVP system
+- [ ] Member profile updates and password recovery (requires a configured email delivery provider)
+- [x] Event RSVP system
 - [ ] Sermon notes download
 - [ ] Live streaming integration
 - [ ] Multi-language support

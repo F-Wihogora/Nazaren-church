@@ -27,7 +27,8 @@ export default function AdminVisitorsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Visitor Registrations</h2>
+      <h2 className="text-2xl font-bold mb-2">Visitor Registrations</h2>
+      <p className="text-sm text-muted-foreground mb-6">Owner: Byumvuhore Frederic; backup: Wihogora Florissa. Check every working day and aim to reply within 24–48 hours. SMS alerts are not configured yet.</p>
       {loading ? (
         <div className="text-center py-12">Loading visitors...</div>
       ) : (

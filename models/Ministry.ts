@@ -6,6 +6,9 @@ export interface IMinistry extends Document {
   description: string;
   members: mongoose.Types.ObjectId[];
   meetingSchedule?: string;
+  division?: string;
+  assistantLeader?: string;
+  image?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,6 +20,9 @@ const MinistrySchema: Schema = new Schema(
     description: { type: String, required: true },
     members: [{ type: Schema.Types.ObjectId, ref: "Member" }],
     meetingSchedule: { type: String },
+    division: { type: String },
+    assistantLeader: { type: String },
+    image: { type: String, trim: true, maxlength: 500 },
   },
   { timestamps: true }
 );

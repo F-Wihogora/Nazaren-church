@@ -8,6 +8,7 @@ export interface IAnnouncement extends Document {
   content: string;
   bibleVerse?: string;
   isActive: boolean;
+  targetDivisions: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,6 +24,7 @@ const AnnouncementSchema: Schema = new Schema(
     content: { type: String, required: true },
     bibleVerse: { type: String },
     isActive: { type: Boolean, default: true },
+    targetDivisions: { type: [String], default: [] },
   },
   { timestamps: true }
 );

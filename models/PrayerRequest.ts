@@ -2,9 +2,11 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IPrayerRequest extends Document {
   name?: string;
+  email?: string;
+  phone?: string;
   request: string;
   isPublic: boolean;
-  status: "pending" | "answered" | "archived";
+  status: "pending" | "in_progress" | "completed" | "answered" | "archived";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -12,11 +14,13 @@ export interface IPrayerRequest extends Document {
 const PrayerRequestSchema: Schema = new Schema(
   {
     name: { type: String },
+    email: { type: String },
+    phone: { type: String },
     request: { type: String, required: true },
     isPublic: { type: Boolean, default: true },
     status: {
       type: String,
-      enum: ["pending", "answered", "archived"],
+      enum: ["pending", "in_progress", "completed", "answered", "archived"],
       default: "pending",
     },
   },

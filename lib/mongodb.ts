@@ -1,5 +1,23 @@
 import mongoose from "mongoose";
 
+// Pre-register all models to prevent MissingSchemaError during .populate() calls
+import "@/models/AdminUser";
+import "@/models/Member";
+import "@/models/MemberCredential";
+import "@/models/Family";
+import "@/models/Ministry";
+import "@/models/Event";
+import "@/models/EventRsvp";
+import "@/models/Sermon";
+import "@/models/Announcement";
+import "@/models/Attendance";
+import "@/models/Milestone";
+import "@/models/PastoralVisit";
+import "@/models/PrayerRequest";
+import "@/models/GivingRecord";
+import "@/models/SmallGroup";
+import "@/models/Contact";
+import "@/models/Visitor";
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
